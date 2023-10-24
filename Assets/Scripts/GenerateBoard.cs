@@ -14,11 +14,14 @@ public class GenerateBoard : MonoBehaviour
     [SerializeField] GameObject cubeDead;
     GameObject[] cubes;
     Tiles[,] tiles;
-    float timeInScreen = 2f;
+    float timeInScreen = 4f;
+    int[] defaultBuffer;
 
 
     void Start ()
     {
+        defaultBuffer = new int[grid_y];
+        GenerateDefaultArray();
         cubes = new GameObject[grid_x*grid_y];
         tiles = new Tiles[grid_x, grid_y];
         StartCoroutine(ReGenerateGridRotine());
@@ -42,7 +45,13 @@ public class GenerateBoard : MonoBehaviour
     /// Genera el tablero inicial y llena la matriz de Tiles.
     /// </summary>
     /// <param name="tiles">La matriz de Tiles que representa el tablero.</param>
-
+    private void GenerateDefaultArray()
+    {
+        for(int i = 0; i < grid_y; i++)
+        {
+            defaultBuffer[i] = (Random.Range(0,2));
+        }
+    }
     private void GenerateGrid(Tiles[,] tiles)
     {
         
@@ -93,6 +102,82 @@ public class GenerateBoard : MonoBehaviour
             }
         }
     }
+
+    private void GenerateGridWithRules(Tiles[,] tiles)
+    {
+
+        for (int x = 0; x < grid_x; x++)
+        {
+            int[] tempDefault = new int[grid_y];
+
+            for (int y = 0; y < grid_y; y++)
+            {
+                tiles[x, y] = new Tiles(x, y);
+                if (y == 0 )
+                {
+                    tiles[x, y].SetIsDead(true);
+                    tempDefault[y] = 1;
+                    continue;
+                }
+                if (y == grid_y-1)
+                {
+                    tiles[x, y].SetIsDead(true);
+                    tempDefault[y] = 1;
+                    continue;
+                }
+                if (defaultBuffer[y + 1] == 1 & defaultBuffer[y -1] == 1 & defaultBuffer[y] == 1)
+                {
+                    tiles[x, y].SetIsDead(true);
+                    tempDefault[y] = 1;
+                    continue;
+                }
+                if (defaultBuffer[y + 1] == 1 & defaultBuffer[y - 1] == 0 & defaultBuffer[y] == 1)
+                {
+                    tiles[x, y].SetIsDead(true);
+                    tempDefault[y] = 1;
+                    continue;
+                }
+                if (defaultBuffer[y + 1] == 0 & defaultBuffer[y - 1] == 1 & defaultBuffer[y] == 1)
+                {
+                    tiles[x, y].SetIsDead(false);
+                    tempDefault[y] = 0;
+                    continue;
+                }
+                if (defaultBuffer[y + 1] == 0 & defaultBuffer[y - 1] == 0 & defaultBuffer[y] == 1)
+                {
+                    tiles[x, y].SetIsDead(false);
+                    tempDefault[y] = 0;
+                    continue;
+                }
+                if (defaultBuffer[y + 1] == 1 & defaultBuffer[y - 1] == 1 & defaultBuffer[y] == 0)
+                {
+                    tiles[x, y].SetIsDead(true);
+                    tempDefault[y] = 1;
+                    continue;
+                }
+                if (defaultBuffer[y + 1] == 1 & defaultBuffer[y - 1] == 0 & defaultBuffer[y] == 0)
+                {
+                    tiles[x, y].SetIsDead(false);
+                    tempDefault[y] = 0;
+                    continue;
+                }
+                if (defaultBuffer[y + 1] == 0 & defaultBuffer[y - 1] == 1 & defaultBuffer[y] == 0)
+                {
+                    tiles[x, y].SetIsDead(true);
+                    tempDefault[y] = 1;
+                    continue;
+                }
+                if (defaultBuffer[y + 1] == 0 & defaultBuffer[y - 1] == 0 & defaultBuffer[y] == 0)
+                {
+                    tiles[x, y].SetIsDead(true);
+                    tempDefault[y] = 1;
+                    continue;
+                }
+            }
+            defaultBuffer = tempDefault;
+        }
+    }
+
 
     public void SetCubesGridFig1(Tiles[,] tiles)
     {
@@ -177,10 +262,11 @@ public class GenerateBoard : MonoBehaviour
     {
         while (true)
         {
-            GenerateGrid(tiles);
+           // GenerateGrid(tiles);
+            GenerateGridWithRules(tiles);
             PrintGrid(tiles);
-            //SetCubesGrid(tiles);
-            SetCubesGridFig1(tiles);
+            SetCubesGrid(tiles);
+           // SetCubesGridFig1(tiles);
             yield return new WaitForSeconds(timeInScreen);
         }
     }

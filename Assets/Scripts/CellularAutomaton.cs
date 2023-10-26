@@ -170,12 +170,15 @@ public class CellularAutomaton : MonoBehaviour
     /// <param name="number">Decimal number to convert.</param>
     void ToBinary(int number)
     {
-        for (int i = 0; i < 8; i++)
+        
+        for (int i = 7; i >= 0; i--)
         {
-            ruleSet[ruleSet.Length - i - 1] = number % 2;
+            ruleSet[i] = number % 2;
             number = number / 2;
         }
+        Debug.Log("Reglas: " + string.Join(",", ruleSet));
     }
+
 
     /// <summary>
     /// Instantiates cell game objects based on their state.

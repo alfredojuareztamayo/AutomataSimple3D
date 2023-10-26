@@ -14,6 +14,8 @@ public class ElementaryCA : MonoBehaviour
     public int grid_y;
     public int ruleBinary;
     public bool initialCondition;
+   // public TMP_InputField ruleInput;
+     int ruleNumber;
 
     // Start is called before the first frame update
     void Start()
@@ -24,8 +26,10 @@ public class ElementaryCA : MonoBehaviour
         buffer = new bool[grid_y];
         InitialCondition(initialCondition);
         ToBinary(ruleBinary);
-        //Evolve();
+       // Evolve();
     }
+
+
 
     // Update is called once per frame
     void Update()
@@ -35,49 +39,48 @@ public class ElementaryCA : MonoBehaviour
 
     void InitialCondition(bool isSimple)
     {
+         for (int i = 0; i < grid.Length; i++)
+            {
+                grid[i] = false;
+            }
         if (isSimple)
         {
             grid[grid.Length / 2] = true;
-        }
-        else
-        {
-            for (int i = 0; i < grid.Length; i++)
-            {
-                grid[i] = Random.Range(0, 2) == 1;
-            }
         }
     }
 
     public void StartEvolveButtom()
     {
+       // ruleNumber = Mathf.Clamp(inputRuleNumber, 0, 255);
         StartCoroutine(StartEvolve());
     }
 
-    public void Evolve()
+    void Evolve()
     {
-    
-            bool res = false;
-            for (int i = 0; i < grid.Length; i++)
+    int j = 0;
+   
+        bool res;
+        //ClearBuff();
+        for (int i = 0; i < grid.Length; i++)
+        {
+            if (i == 0)
             {
-                if (i == 0)
-                {
-                    res = Rules(grid[grid.Length - 1], grid[i], grid[i + 1]);
-                }
-                else if (i == grid.Length - 1)
-                {
-                    res = Rules(grid[i - 1], grid[i], grid[0]);
-                }
-                else
-                {
-                    res = Rules(grid[i - 1], grid[i], grid[i + 1]);
-                }
-                buffer[i] = res;
+                res = Rules(grid[grid.Length - 1], grid[i], grid[i + 1]);
             }
-            grid = buffer;
-            PrintGrid();
-            ClearBuff();
-            
-        
+            else if (i == grid.Length - 1)
+            {
+                res = Rules(grid[i - 1], grid[i], grid[0]);
+            }
+            else
+            {
+                res = Rules(grid[i - 1], grid[i], grid[i + 1]);
+            }
+            buffer[i] = res;
+        }
+        PrintGrid();
+        grid = buffer; // Actualiza grid con los nuevos valores
+        //j++;
+    
     }
 
 
@@ -103,6 +106,12 @@ public class ElementaryCA : MonoBehaviour
         
     }
 
+    void DestroyCubes(){
+        foreach(GameObject cube in cubes){
+            Destroy(cube);
+        }
+    }
+
     void ClearBuff()
     {
         for (int i = 0; i < buffer.Length; i++)
@@ -110,6 +119,7 @@ public class ElementaryCA : MonoBehaviour
             buffer[i] = false;
         }
     }
+
     bool Rules(bool a, bool b, bool c)
     {
         if (a && b && c)
@@ -147,15 +157,19 @@ public class ElementaryCA : MonoBehaviour
         return false;
     }
 
+    
     void ToBinary(int number)
     {
-        int[] numberarray = new int[8];
-        for (int i = 0; i < number; i++)
+       int[] numberarray = new int[8];
+        for (int i = 7; i >= 0 ; i--)
         {
             ruleSet[i] = number % 2;
             number = number / 2;
         }
+        Debug.Log("Reglas: "+ string.Join(",", ruleSet));
     }
+    
+
 
     IEnumerator StartEvolve()
     {

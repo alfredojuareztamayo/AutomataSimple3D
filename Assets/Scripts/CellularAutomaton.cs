@@ -10,7 +10,7 @@ public class CellularAutomaton : MonoBehaviour
     int[] ruleSet;
     bool[] grid;
     int limitGrid = 30;
-    int ruleNum;
+    int ruleNumerator;
     
 
     public TMP_InputField ruleInputField;
@@ -21,30 +21,30 @@ public class CellularAutomaton : MonoBehaviour
     {
         ruleSet = new int[8];
         grid = new bool[80];
-        InitialCondition(true);
-        InitializeInputField();
+        initialCondition(true);
+        initializeInputField();
     }
 
 
     /// <summary>
     /// Initializes the UI components and assigns click event to the evolutionButton.
     /// </summary>
-    void InitializeInputField()
+    void initializeInputField()
     {
-        evolutionButton.onClick.AddListener(ButtomOnClickToEvolve);
+        evolutionButton.onClick.AddListener(buttomOnClickToEvolve);
     }
 
     /// <summary>
     /// Event handler for the evolutionButton click event.
     /// </summary>
-    void ButtomOnClickToEvolve()
+    void buttomOnClickToEvolve()
     {
         if (int.TryParse(ruleInputField.text, out int inputRuleNum))
         {
-            ruleNum = Mathf.Clamp(inputRuleNum, 0, 255);
-            ToBinary(ruleNum);
-            ResetEverthing();
-            EvolveAutomata();
+            ruleNumerator = Mathf.Clamp(inputRuleNum, 0, 255);
+            toBinary(ruleNumerator);
+            resetEverthing();
+            evolveAutomata();
         }
     }
 
@@ -52,7 +52,7 @@ public class CellularAutomaton : MonoBehaviour
     /// Resets the current generation and destroys existing ACE
     /// game objects.
     /// </summary>
-    void ResetEverthing()
+    void resetEverthing()
     {
         for (int i = 0; i < grid.Length; i++)
         {
@@ -70,7 +70,7 @@ public class CellularAutomaton : MonoBehaviour
     /// Sets the initial condition for the generation.
     /// </summary>
     /// <param name="isSimple">Flag indicating whether to use a simple initial condition or randomize.</param>
-    void InitialCondition(bool isSimple)
+    void initialCondition(bool isSimple)
     {
         if (isSimple)
         {
@@ -88,14 +88,14 @@ public class CellularAutomaton : MonoBehaviour
     /// <summary>
     /// Evolves the cellular automaton generation based on the defined rules.
     /// </summary>
-    void EvolveAutomata()
+    void evolveAutomata()
     {
         for (int genIndex = 1; genIndex < limitGrid - 1; genIndex++)
         {
             bool[] buffer = new bool[80];
             for (int j = 0; j < grid.Length; j++)
             {
-                CreateEntities(j, grid[j], genIndex);
+                createEntities(j, grid[j], genIndex);
             }
             bool res;
             //ClearBuff();
@@ -103,15 +103,15 @@ public class CellularAutomaton : MonoBehaviour
             {
                 if (i == 0)
                 {
-                    res = DetermineState(grid[grid.Length - 1], grid[i], grid[i + 1]);
+                    res = determineState(grid[grid.Length - 1], grid[i], grid[i + 1]);
                 }
                 else if (i == grid.Length - 1)
                 {
-                    res = DetermineState(grid[i - 1], grid[i], grid[0]);
+                    res = determineState(grid[i - 1], grid[i], grid[0]);
                 }
                 else
                 {
-                    res = DetermineState(grid[i - 1], grid[i], grid[i + 1]);
+                    res = determineState(grid[i - 1], grid[i], grid[i + 1]);
                 }
                 buffer[i] = res;
             }
@@ -127,7 +127,7 @@ public class CellularAutomaton : MonoBehaviour
     /// <param name="b">Current cell state.</param>
     /// <param name="c">Right neighbor state.</param>
     /// <returns>Returns true if the cell should be alive in the next generation, false otherwise.</returns>
-    bool DetermineState(bool a, bool b, bool c)
+    bool determineState(bool a, bool b, bool c)
     {
         if (a && b && c)
         {
@@ -168,7 +168,7 @@ public class CellularAutomaton : MonoBehaviour
     /// Converts a decimal number to binary and stores it in the ruleSet array.
     /// </summary>
     /// <param name="number">Decimal number to convert.</param>
-    void ToBinary(int number)
+    void toBinary(int number)
     {
         
         for (int i = 7; i >= 0; i--)
@@ -183,14 +183,14 @@ public class CellularAutomaton : MonoBehaviour
     /// <summary>
     /// Instantiates cell game objects based on their state.
     /// </summary>
-    /// <param name="index">Index of the cell in the generation.</param>
-    /// <param name="state">State of the cell (alive or dead).</param>
-    /// <param name="genIndex">Index of the current generation.</param>
-    void CreateEntities(int index, bool state, int genIndex)
+    /// <param name="id">Index of the cell in the generation.</param>
+    /// <param name="fase">State of the cell (alive or dead).</param>
+    /// <param name="index">Index of the current generation.</param>
+    void createEntities(int id, bool fase, int index)
     {
-        Vector3 position = new Vector3(index, -genIndex, 0f);
-        GameObject entity = Instantiate(entityPrefab, position, Quaternion.identity);
-        Renderer ren = entity.GetComponent<Renderer>();
-        ren.material.color = state ? Color.black : Color.white;
+        GameObject entity = Instantiate(entityPrefab, new Vector3(id, -index, 0f), Quaternion.identity);
+        entity.GetComponent<Renderer>().material.color = fase ? Color.black : Color.green;
     }
+
+ 
 }

@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\ElementaryCA.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
+    <Compile Include="Assets\Scripts\ProbabilisticCA.cs" />
     <Compile Include="Assets\Scripts\Tiles.cs" />
     <Compile Include="Assets\Scripts\CellularAutomaton.cs" />
     <Compile Include="Assets\Scripts\GenerateBoard.cs" />
